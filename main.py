@@ -6,31 +6,31 @@ class Dimensions:
         self.waist = waist
         self.hip = hip
 
-class Dimensions(Body):
-    def __init__(self, customerID):
-        super().__init__(customerID )
+class Body(Dimensions):
+    def __init__(self, customerID, bust, waist, hip):
+        super().__init__(bust, waist, hip)
         self.customerID = customerID
 
-class Dimensions (Size):
-    def __init__(self, sizeName, sizeChartID):
-        super().__init__(sizeName, sizeChartID)
+class Size(Dimensions):
+    def __init__(self, sizeName, sizeChartID, bust, waist, hip):
+        super().__init__(bust, waist, hip)
         self.sizeName = sizeName
         self.sizeChartID = sizeChartID
 
 class Retailer:
-    def __init__(self, sizeChartID, retailerID, retailerName)
+    def __init__(self, sizeChartID, retailerID, retailerName):
         self.sizeChartID = 0
         self.retailerID = 0 
         self.retailerName = name
 
 class Customer:
-    def __init__(self, customerID, customerUsername, customerPassword)
+    def __init__(self, customerID, customerUsername, customerPassword):
         self.customerID = customerID
         self.customerUsername = customerUserName 
         self.customerPassword = customerPassword
 
 class SizeChart:
-    def __init__(self, sizeChartID, sizeNames)
+    def __init__(self, sizeChartID, sizeNames):
         self.sizeChartID = 0
         self.sizeNames = []
 
