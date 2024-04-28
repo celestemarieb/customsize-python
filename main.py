@@ -1,3 +1,13 @@
+# system packages 
+import csv
+import os.path
+
+# external packages 
+
+# import functions 
+
+
+
 # create objects 
 
 class Dimensions:
@@ -33,6 +43,35 @@ class SizeChart:
     def __init__(self, sizeChartID, sizeNames):
         self.sizeChartID = sizeChartID
         self.sizeNames = sizeNames
+
+# create databases 
+
+# store customer information
+
+customers = []
+
+with open('customers.csv', 'w') as f:
+    writer = csv.DictWriter(f, fieldnames=['customerID','customerUsername','customerPassword','customer_bust','customer_waist','customer_hip'])
+    writer.writeheader()
+    writer.writerows(customers)
+
+# store retailer information
+
+retailers = []
+
+with open('retailers.csv', 'w') as f:
+    writer = csv.DictWriter(f, fieldnames=['sizeChartID','retailerID','retailerName'])
+    writer.writeheader()
+    writer.writerows(retailers)
+
+# store sizing information 
+
+sizing = []
+
+with open('sizing.csv', 'w') as f:
+    writer = csv.DictWriter(f, fieldnames=['sizeChartID','sizeName','size_bust','size_waist','size_hip'])
+    writer.writeheader()
+    writer.writerows(sizing)
 
 # create new customer
 
@@ -76,7 +115,7 @@ customer_measurements = collectBodyMeasurements(customerInformation.customerID,c
 def createRetailer():
     id_input = input("Retailer ID: ")
     name_input = input("name: ")
-    size_chart_id = input("Size Chart Id:")
+    size_chart_id = input("Size Chart ID:")
     newRetailer = Retailer (size_chart_id,id_input,name_input)
     return newRetailer
 
@@ -122,14 +161,4 @@ def evaluateFit(customer_measurements,size_measurements):
 
 fit_determination = evaluateFit(customer_measurements,size_measurements)
 
-# create customer database - dictionary 
 
-# store in customer database 
-
-# create retailer database 
-
-# create sizing database 
-
-# store sizechart 
-
-# upload csvs to databases 
