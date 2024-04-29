@@ -6,8 +6,6 @@ import os.path
 
 # import functions 
 
-
-
 # create objects 
 
 class Dimensions:
@@ -48,30 +46,58 @@ class SizeChart:
 
 # store customer information
 
-customers = []
+customers = {
+    "customerID" : {
+        "customerUserName" : "",
+        "customerPassword" : "",
+        "customer_bust" : "",
+        "customer_waist" : "",
+        "customer_hip" : "",
+    }
+}
 
-with open('customers.csv', 'w') as f:
-    writer = csv.DictWriter(f, fieldnames=['customerID','customerUsername','customerPassword','customer_bust','customer_waist','customer_hip'])
-    writer.writeheader()
-    writer.writerows(customers)
+
+#with open('customers.csv', 'w') as f:
+    #writer = csv.DictWriter(f, fieldnames=['customerID','customerName','customerPassword','customer_bust','customer_waist','customer_hip'])
+    #writer.writeheader()
+    #writer.writerows(customers)
+
+# print customer database 
+
+#with open('customers.csv') as f:
+    #reader = csv.DictReader(f)
+    #for row in reader:
+        #print(row)
 
 # store retailer information
 
-retailers = []
+retailers = {
+    "retailerID" : {
+        "sizeChartID" : "",
+        "retailerName" : "",
+    }
+}
 
-with open('retailers.csv', 'w') as f:
-    writer = csv.DictWriter(f, fieldnames=['sizeChartID','retailerID','retailerName'])
-    writer.writeheader()
-    writer.writerows(retailers)
+#with open('retailers.csv', 'w') as f:
+    #writer = csv.DictWriter(f, fieldnames=['sizeChartID','retailerID','retailerName'])
+    #writer.writeheader()
+    #writer.writerows(retailers)
 
 # store sizing information 
 
-sizing = []
+sizing = {
+    "sizeName" : {
+        "sizeChartID" : "",
+        "size_bust" : "",
+        "size_waist" : "",
+        "size_hip" : "",
+    }
+}
 
-with open('sizing.csv', 'w') as f:
-    writer = csv.DictWriter(f, fieldnames=['sizeChartID','sizeName','size_bust','size_waist','size_hip'])
-    writer.writeheader()
-    writer.writerows(sizing)
+#with open('sizing.csv', 'w') as f:
+    #writer = csv.DictWriter(f, fieldnames=['sizeChartID','sizeName','size_bust','size_waist','size_hip'])
+    #writer.writeheader()
+    #writer.writerows(sizing)
 
 # create new customer
 
@@ -80,6 +106,8 @@ def createCustomer():
     username_input = input("username: ")
     password_input = input("password: ")
     newCustomer = Customer(id_input,username_input,password_input)
+    customers["customerID"] = id_input
+    customers["customerID"][customerUserName] = username_input
     return newCustomer
 
 # collect dimensions
@@ -157,8 +185,10 @@ def evaluateFit(customer_measurements,size_measurements):
     if customer_measurements.bust == size_measurements.bust and customer_measurements.waist == size_measurements.waist and customer_measurements.hip == size_measurements.hip:
         fit = True 
     else: fit = False
-    print(fit)
+    return fit
 
 fit_determination = evaluateFit(customer_measurements,size_measurements)
+
+print(fit_determination)
 
 
