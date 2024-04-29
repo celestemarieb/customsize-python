@@ -4,6 +4,9 @@ import os.path
 
 # external packages 
 
+import numpy as np
+import pandas as pd
+
 # import functions 
 
 # create objects 
@@ -46,28 +49,18 @@ class SizeChart:
 
 # store customer information
 
-customers = {
-    "customerID" : {
-        "customerUserName" : "",
-        "customerPassword" : "",
-        "customer_bust" : "",
-        "customer_waist" : "",
-        "customer_hip" : "",
-    }
-}
+def createCustomerDatabase():
+    customer_columns = ['CustomerID','customerUserName','customerPassword','customer_bust','customer_waist','customer_hip']
+    customers = pd.DataFrame(columns=customer_columns)
+    customers['CustomerID'] = customers.index
+    customers.to_csv('customers.csv',sep=',',index=False,encoding='utf-8')
+    return customers
 
+def updateCustomerDatabase():
+    customers.to_csv('customers.csv',sep=',',index=False,encoding='utf-8')
+    return customers
 
-#with open('customers.csv', 'w') as f:
-    #writer = csv.DictWriter(f, fieldnames=['customerID','customerName','customerPassword','customer_bust','customer_waist','customer_hip'])
-    #writer.writeheader()
-    #writer.writerows(customers)
-
-# print customer database 
-
-#with open('customers.csv') as f:
-    #reader = csv.DictReader(f)
-    #for row in reader:
-        #print(row)
+customers = createCustomerDatabase()
 
 # store retailer information
 
@@ -77,11 +70,6 @@ retailers = {
         "retailerName" : "",
     }
 }
-
-#with open('retailers.csv', 'w') as f:
-    #writer = csv.DictWriter(f, fieldnames=['sizeChartID','retailerID','retailerName'])
-    #writer.writeheader()
-    #writer.writerows(retailers)
 
 # store sizing information 
 
@@ -94,10 +82,6 @@ sizing = {
     }
 }
 
-#with open('sizing.csv', 'w') as f:
-    #writer = csv.DictWriter(f, fieldnames=['sizeChartID','sizeName','size_bust','size_waist','size_hip'])
-    #writer.writeheader()
-    #writer.writerows(sizing)
 
 # create new customer
 
@@ -106,8 +90,8 @@ def createCustomer():
     username_input = input("username: ")
     password_input = input("password: ")
     newCustomer = Customer(id_input,username_input,password_input)
-    customers["customerID"] = id_input
-    customers["customerID"][customerUserName] = username_input
+    customers.loc[id_input] = [id_input,username_input,password_input,"","",""]
+    updateCustomerDatabase()
     return newCustomer
 
 # collect dimensions
@@ -128,6 +112,10 @@ def collectHipMeasurement():
 
 def collectBodyMeasurements(customerId, customer_bust,customer_waist,customer_hip): 
     bodyInformation = Body (customerId,customer_bust,customer_waist,customer_hip)
+    customers.at[customerId,'customer_bust'] = customer_bust
+    customers.at[customerId,'customer_waist'] = customer_waist
+    customers.at[customerId,'customer_hip'] = customer_hip
+    updateCustomerDatabase()
     return bodyInformation
 
 # collect new customer information
