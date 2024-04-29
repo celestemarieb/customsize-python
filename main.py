@@ -93,9 +93,6 @@ def updateSizingDatabase():
 
 sizing = createSizingDatabase()
 
-
-
-
 # create new customer
 
 def createCustomer():
