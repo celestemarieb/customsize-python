@@ -23,10 +23,11 @@ class Body(Dimensions):
         self.customerID = customerID
 
 class Size(Dimensions):
-    def __init__(self, sizeName, sizeChartID, bust, waist, hip):
+    def __init__(self, sizeName, sizeChartID, sizeID, bust, waist, hip):
         super().__init__(bust, waist, hip)
         self.sizeName = sizeName
         self.sizeChartID = sizeChartID
+        self.sizeID = sizeID
 
 class Retailer:
     def __init__(self, sizeChartID, retailerID, retailerName):
@@ -79,14 +80,20 @@ retailers = createRetailerDatabase()
 
 # store sizing information 
 
-sizing = {
-    "sizeName" : {
-        "sizeChartID" : "",
-        "size_bust" : "",
-        "size_waist" : "",
-        "size_hip" : "",
-    }
-}
+def createSizingDatabase():
+    sizing_columns = ['sizeID','sizeChartID','sizeName','size_bust','size_waist','size_hip']
+    sizing = pd.DataFrame(columns=sizing_columns)
+    sizing['sizeID'] = sizing.index
+    sizing.to_csv('sizing.csv',sep=',',index=False,encoding='utf-8')
+    return sizing
+
+def updateSizingDatabase():
+    sizing.to_csv('sizing.csv',sep=',',index=False,encoding='utf-8')
+    return sizing
+
+sizing = createSizingDatabase()
+
+
 
 
 # create new customer
@@ -165,11 +172,14 @@ newSizeChartID = getSizeChartID(sizeChartInformation)
 
 def createSize():
     name_input = input("Size Name: ")
+    id_input = input("Size ID: ")
     sizeChartInformation.sizeNames.append(name_input)
     size_bust = collectBustMeasurement()
     size_waist = collectWaistMeasurement()
     size_hip = collectHipMeasurement()
-    newSize = Size(name_input,newSizeChartID,size_bust,size_waist,size_hip)
+    newSize = Size(name_input,newSizeChartID,id_input,size_bust,size_waist,size_hip)
+    sizing.loc[id_input] = [id_input,newSizeChartID,name_input,size_bust,size_waist,size_hip]
+    updateSizingDatabase()
     return newSize
 
 size_measurements = createSize()
