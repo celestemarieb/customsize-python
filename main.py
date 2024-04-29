@@ -45,7 +45,7 @@ class SizeChart:
         self.sizeChartID = sizeChartID
         self.sizeNames = sizeNames
 
-# create databases 
+# databases 
 
 # store customer information
 
@@ -64,12 +64,18 @@ customers = createCustomerDatabase()
 
 # store retailer information
 
-retailers = {
-    "retailerID" : {
-        "sizeChartID" : "",
-        "retailerName" : "",
-    }
-}
+def createRetailerDatabase():
+    retailer_columns = ['retailerID','sizeChartID','retailerName']
+    retailers = pd.DataFrame(columns=retailer_columns)
+    retailers['retailerID'] = retailers.index
+    retailers.to_csv('retailers.csv',sep=',',index=False,encoding='utf-8')
+    return retailers
+
+def updateRetailerDatabase():
+    retailers.to_csv('retailers.csv',sep=',',index=False,encoding='utf-8')
+    return retailers
+
+retailers = createRetailerDatabase()
 
 # store sizing information 
 
@@ -130,9 +136,11 @@ customer_measurements = collectBodyMeasurements(customerInformation.customerID,c
 
 def createRetailer():
     id_input = input("Retailer ID: ")
-    name_input = input("name: ")
+    name_input = input("Retailer Name: ")
     size_chart_id = input("Size Chart ID:")
     newRetailer = Retailer (size_chart_id,id_input,name_input)
+    retailers.loc[id_input] = [id_input,size_chart_id,name_input]
+    updateRetailerDatabase()
     return newRetailer
 
 retailerInformation = createRetailer()
