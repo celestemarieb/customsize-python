@@ -1,50 +1,20 @@
 # system packages 
-import csv
-import os.path
 
 # external packages 
 
+import typer
 import numpy as np
 import pandas as pd
+from rich.console import Console
+from rich.table import Table
+
+# import schema 
+
+from schema import *
 
 # import functions 
 
-# create objects 
-
-class Dimensions:
-    def __init__(self, bust, waist, hip):
-        self.bust = bust
-        self.waist = waist
-        self.hip = hip
-
-class Body(Dimensions):
-    def __init__(self, customerID, bust, waist, hip):
-        super().__init__(bust, waist, hip)
-        self.customerID = customerID
-
-class Size(Dimensions):
-    def __init__(self, sizeName, sizeChartID, sizeID, bust, waist, hip):
-        super().__init__(bust, waist, hip)
-        self.sizeName = sizeName
-        self.sizeChartID = sizeChartID
-        self.sizeID = sizeID
-
-class Retailer:
-    def __init__(self, sizeChartID, retailerID, retailerName):
-        self.sizeChartID = sizeChartID
-        self.retailerID = retailerID 
-        self.retailerName = retailerName
-
-class Customer:
-    def __init__(self, customerID, customerUsername, customerPassword):
-        self.customerID = customerID
-        self.customerUsername = customerUsername 
-        self.customerPassword = customerPassword
-
-class SizeChart:
-    def __init__(self, sizeChartID, sizeNames):
-        self.sizeChartID = sizeChartID
-        self.sizeNames = sizeNames
+from functions import *
 
 # databases 
 
@@ -72,11 +42,17 @@ def createRetailerDatabase():
     retailers.to_csv('retailers.csv',sep=',',index=False,encoding='utf-8')
     return retailers
 
+def populateRetailerDatabase():
+    retailers = pd.read_csv("retailers_data.csv")
+    return retailers
+
 def updateRetailerDatabase():
     retailers.to_csv('retailers.csv',sep=',',index=False,encoding='utf-8')
     return retailers
 
 retailers = createRetailerDatabase()
+retailers = populateRetailerDatabase()
+retailers = updateRetailerDatabase()
 
 # store sizing information 
 
@@ -87,16 +63,22 @@ def createSizingDatabase():
     sizing.to_csv('sizing.csv',sep=',',index=False,encoding='utf-8')
     return sizing
 
+def populateSizingDatabase():
+    sizing = pd.read_csv("sizing_data.csv")
+    return sizing
+
 def updateSizingDatabase():
     sizing.to_csv('sizing.csv',sep=',',index=False,encoding='utf-8')
     return sizing
 
 sizing = createSizingDatabase()
+sizing = populateSizingDatabase()
+sizing = updateSizingDatabase()
 
 # create new customer
 
 def createCustomer():
-    id_input = input("ID: ")
+    id_input = input("User ID: ")
     username_input = input("username: ")
     password_input = input("password: ")
     newCustomer = Customer(id_input,username_input,password_input)
@@ -181,17 +163,105 @@ def createSize():
 
 size_measurements = createSize()
 
-# evaluate 'fit' 
+new_dimensions = Dimensions(size_measurements.bust,size_measurements.waist,size_measurements.hip)
 
-def evaluateFit(customer_measurements,size_measurements):
+# evaluate fit
+
+def evaluateFit(customer,dimensions):
     fit = True  
-    if customer_measurements.bust == size_measurements.bust and customer_measurements.waist == size_measurements.waist and customer_measurements.hip == size_measurements.hip:
+    if customer.bust == dimensions.bust and customer.waist == dimensions.waist and customer.hip == dimensions.hip:
         fit = True 
     else: fit = False
     return fit
 
-fit_determination = evaluateFit(customer_measurements,size_measurements)
+fit_determination = evaluateFit(customer_measurements,new_dimensions)
 
 print(fit_determination)
 
 
+# feature 1: find size
+
+def find_sizes_by_retailer(retailerName):
+    val1 = retailers.loc[retailers['retailerName']==retailerName]
+    val2 = val1['sizeChartID'].values[0]
+    return val2
+
+
+selected_size_chart = float(find_sizes_by_retailer(retailerInformation.retailerName))
+
+def find_size_within_retailer(sizeChartID,customer_measurements):
+    w = float(sizeChartID)
+    x = float(customer_measurements.bust)
+    y = float(customer_measurements.waist)
+    z = float(customer_measurements.hip)
+    a = sizing.query('(sizeChartID==@w) and (size_bust == @x) and (size_waist == @y) and (size_hip == @z)')
+    b = a.head()
+    size_match = b['sizeName'].values[0]
+    return size_match
+
+print(find_size_within_retailer(selected_size_chart,customer_measurements))
+
+# feature 2: check fit
+
+def check_fit(customer_measurements,retailerName,sizeName):
+    a = get_size_id(retailerName,sizeName)
+    b = get_dimensions_of_size(a)
+    c = evaluateFit(customer_measurements,b)
+    return c
+
+# feature 3: convert size
+
+def get_size_id(retailerName,sizeName):
+    a = find_sizes_by_retailer(retailerName)
+    b = sizing.query('(sizeChartID == @a) and (sizeName == @sizeName)')
+    c = b.head()
+    size_id_match = c['sizeID'].values[0]
+    return size_id_match
+
+a = get_size_id(retailerInformation.retailerName,size_measurements.sizeName)
+print(a)
+
+def get_dimensions_of_size(sizeID):
+    x = float(sizeID)
+    a = sizing.query('(sizeID==@sizeID)')
+    b = a.head()
+    bust = b[b['size_bust']]
+    waist = b[b['size_waist']]
+    hip = b[b['size_hip']]
+    size_dimensions = Dimensions(bust,waist,hip)
+    return size_dimensions
+
+b = get_dimensions_of_size(a)
+print(b)
+
+def convert_size(dimensions,retailerName):
+    a = float(find_sizes_by_retailer(retailerName))
+    b = find_size_within_retailer(a,customer_measurements=dimensions)
+    return b
+
+c =convert_size(b,retailerInformation.retailerName)
+
+# interface : 
+
+#console = Console()
+
+#app = typer.Typer()
+
+#@app.command(short_help='adds user')
+#def add(Customer:str):
+    #typer.echo(f"adding {customerInformation}")
+
+#@app.command(short_help='shows all sizing')
+#def show(sizing:str):
+    #console.print("[bold magenta]Sizing Database[/bold magenta]!")
+
+    #table = Table(show_header=True,header_style="bold blue")
+    #table.add_column("#",style="dim",width=6)
+    #table.add_column("retailer",min_width=20)
+    #table.add_column("size name", min_width=12,justify="right")
+
+    #for idx, size_measurements in enumerate(sizing[1]):
+        #table.add_row(str(idx),size_measurements[0])
+
+#if __name__ == "__main__":
+    #app()

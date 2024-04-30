@@ -2,3 +2,7 @@
 /retailers.csv
 /sizing.csv
 *.csv
+/test_main.py
+/__pycache__
+/venv
+/.pytest_cache
