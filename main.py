@@ -1,4 +1,5 @@
 # system packages 
+from sys import argv
 
 # external packages 
 
@@ -90,6 +91,28 @@ def find_size():
     return size_match
 
 # feature 2 : check fit 
+
+def check_fit_dialogue():
+    print('Enter the retailer and size. We will check your fit!')
+     # New Customer 
+    customer_details = create_customer()
+    customer_bust = collect_bust_measurement()
+    customer_waist = collect_waist_measurement()
+    customer_hip = collect_hip_measurement()
+    customer_measurements = collect_body_measurements(customer_details.customerID,customer_bust,customer_waist,customer_hip)
+    #Existing Customer
+    #customer_details = find_customer()
+    #customer_information = find_body_measurements(customer_details[1])
+    retailer_name_input = input("Retailer Name: ")
+    size_name_input = input("Size Name: ")
+    fit = check_fit(customer_measurements,retailer_name_input,size_name_input)
+    if fit == True:
+        print('We checked the fit!')
+        print(f'{size_name_input} at {retailer_name_input} is a good fit!')
+    else: 
+        print('We checked the fit!')
+        print(f'{size_name_input} at {retailer_name_input} is not a good fit!')
+    return fit
 
 def check_fit(customer_measurements,retailerName,sizeName):
     a = get_size_id(retailerName,sizeName)
@@ -231,7 +254,7 @@ def evaluate_fit(customer,dimensions):
 #fit_determination = evaluateFit(customer_measurements,new_dimensions)
 
 
-#search functions
+#search 
 
 def find_sizes_by_retailer(retailerName):
     val1 = retailers.loc[retailers['retailerName']==retailerName]
@@ -249,7 +272,7 @@ def find_size_within_retailer(sizeChartID,Dimensions):
     size_match = b['sizeName'].values[0]
     return size_match
 
-# retrieval functions
+# retrieval 
 ####
 def get_size_id(retailerName,sizeName):
     a = find_sizes_by_retailer(retailerName)
@@ -269,7 +292,7 @@ def get_dimensions_of_size(sizeID):
     size_dimensions = Dimensions(bust,waist,hip)
     return size_dimensions
 
-# conversion functions 
+# conversion  
 
 def convert_size_between_retailers(Dimensions,retailerName):
     a = float(find_sizes_by_retailer(retailerName))
@@ -289,7 +312,7 @@ def main():
     if selection == options[0]:
         find_size()
     elif selection == options[1]:
-        check_fit()
+        check_fit_dialogue()
     elif selection == options[2]:
         convert_size()
     elif selection == options[3]:

@@ -1,20 +1,30 @@
 import pytest
 
-from main.py import evaluateFit, createCustomer
+from main import *
+from schema import *
 
-def test_evaluateFit(monkeypatch):
+# fit evaluation (customer to size)
+# exact match
+
+def test_evaluate_fit():
     # Given 
-    customer_measurements.id_input = '01'
-    customer_measurements.customerID = '01'
-    customer_measurements.bust = 'dbust' 
-    size_measurements.bust = 'dbust' 
-    customer_measurements.waist = 'dwaist' 
-    size_measurements.waist = 'dwaist'
-    customer_measurements.hip = 'dhip'
-    size_measurements.hip = 'dhip'
+    customer_measurements = Body ('01','76','58','83.5')
+    size_measurements = Size ('UK 4','111','111','76','58','83.5')
 
     # When 
-    fit = evaluateFit(customer_measurements,size_measurements)
+    fit = evaluate_fit(customer_measurements,size_measurements)
 
     # Then 
     assert fit == True
+
+
+def test_evaluate_fit():
+    # Given 
+    customer_measurements = Body ('01','77','58','83.5')
+    size_measurements = Size ('UK 4','111','111','76','58','83.5')
+
+    # When 
+    fit = evaluate_fit(customer_measurements,size_measurements)
+
+    # Then 
+    assert fit == False
