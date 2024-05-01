@@ -2,19 +2,13 @@
 
 # external packages 
 
-import typer
 import numpy as np
 import pandas as pd
-from rich.console import Console
-from rich.table import Table
+from simple_term_menu import TerminalMenu
 
 # import schema 
 
 from schema import *
-
-# import functions 
-
-from functions import *
 
 # databases 
 
@@ -75,6 +69,30 @@ sizing = createSizingDatabase()
 sizing = populateSizingDatabase()
 sizing = updateSizingDatabase()
 
+# key features 
+# feature 1 
+
+def find_size():
+    print('Enter your user id and the name of the retailer. We will find your size!')
+    customer_details = findCustomer()
+    customerInformation = findBodyMeasurements(customer_details[1])
+    retailer_name_input = input("Retailer Name: ")
+    selected_size_chart_ID = find_sizes_by_retailer(retailer_name_input)
+    size_match = find_size_within_retailer(selected_size_chart_ID,customerInformation)
+    print('We found your size!')
+    print(f'At {retailer_name_input} the size which would match you best is {size_match}')
+    return size_match
+
+# feature 2 
+
+def check_fit():
+    pass
+
+# feature 3 
+
+def convert_size():
+    pass
+
 # create new customer
 
 def createCustomer():
@@ -85,6 +103,20 @@ def createCustomer():
     customers.loc[id_input] = [id_input,username_input,password_input,"","",""]
     updateCustomerDatabase()
     return newCustomer
+
+# find existing customer 
+
+def findCustomer():
+    customer_exists = True
+    id_input = input("User ID: ")
+    a = customers.query('(customerID == id_input)')
+    b = a.head()
+    customer_match = b['customerID'].values[0]
+    if customer_match == id_input:
+        customer_exists = True
+    else: customer_exists = False
+    return [customer_exists,customer_match]
+
 
 # collect dimensions
 
@@ -110,13 +142,23 @@ def collectBodyMeasurements(customerId, customer_bust,customer_waist,customer_hi
     updateCustomerDatabase()
     return bodyInformation
 
+def findBodyMeasurements(customerID):
+    a = customers.query('(customerID == customerID)')
+    b = a.head()
+    customerID = b['customerID'].values[0]
+    customer_bust = b['customer_bust'].values[0]
+    customer_waist = b['customer_waist'].values[0]
+    customer_hip = b['customer_hip'].values[0]
+    bodyInformation = Body (customerID,customer_bust,customer_waist,customer_hip)
+    return bodyInformation
+
 # collect new customer information
 
-customerInformation = createCustomer()
-customer_bust = collectBustMeasurement()
-customer_waist = collectWaistMeasurement()
-customer_hip = collectHipMeasurement()
-customer_measurements = collectBodyMeasurements(customerInformation.customerID,customer_bust,customer_waist,customer_hip)
+#customerInformation = createCustomer()
+#customer_bust = collectBustMeasurement()
+#customer_waist = collectWaistMeasurement()
+#customer_hip = collectHipMeasurement()
+#customer_measurements = collectBodyMeasurements(customerInformation.customerID,customer_bust,customer_waist,customer_hip)
 
 # create new retailer 
 
@@ -129,7 +171,7 @@ def createRetailer():
     updateRetailerDatabase()
     return newRetailer
 
-retailerInformation = createRetailer()
+#retailerInformation = createRetailer()
 
 # create size chart  
 
@@ -139,13 +181,13 @@ def createSizeChart():
     newSizeChart = SizeChart (id_input,size_names_input)
     return newSizeChart 
 
-sizeChartInformation = createSizeChart()
+#sizeChartInformation = createSizeChart()
 
 def getSizeChartID(sizeChartInformation):
     sizeChartID = sizeChartInformation.sizeChartID
     return sizeChartID
 
-newSizeChartID = getSizeChartID(sizeChartInformation)
+#newSizeChartID = getSizeChartID(sizeChartInformation)
     
 # create size 
 
@@ -161,9 +203,9 @@ def createSize():
     updateSizingDatabase()
     return newSize
 
-size_measurements = createSize()
+#size_measurements = createSize()
 
-new_dimensions = Dimensions(size_measurements.bust,size_measurements.waist,size_measurements.hip)
+#new_dimensions = Dimensions(size_measurements.bust,size_measurements.waist,size_measurements.hip)
 
 # evaluate fit
 
@@ -174,9 +216,7 @@ def evaluateFit(customer,dimensions):
     else: fit = False
     return fit
 
-fit_determination = evaluateFit(customer_measurements,new_dimensions)
-
-print(fit_determination)
+#fit_determination = evaluateFit(customer_measurements,new_dimensions)
 
 
 # feature 1: find size
@@ -187,19 +227,19 @@ def find_sizes_by_retailer(retailerName):
     return val2
 
 
-selected_size_chart = float(find_sizes_by_retailer(retailerInformation.retailerName))
+#selected_size_chart = find_sizes_by_retailer(retailerInformation.retailerName)
 
-def find_size_within_retailer(sizeChartID,customer_measurements):
+def find_size_within_retailer(sizeChartID,Body):
     w = float(sizeChartID)
-    x = float(customer_measurements.bust)
-    y = float(customer_measurements.waist)
-    z = float(customer_measurements.hip)
+    x = float(Body.bust)
+    y = float(Body.waist)
+    z = float(Body.hip)
     a = sizing.query('(sizeChartID==@w) and (size_bust == @x) and (size_waist == @y) and (size_hip == @z)')
     b = a.head()
     size_match = b['sizeName'].values[0]
     return size_match
 
-print(find_size_within_retailer(selected_size_chart,customer_measurements))
+#print(find_size_within_retailer(selected_size_chart,customer_measurements))
 
 # feature 2: check fit
 
@@ -218,8 +258,8 @@ def get_size_id(retailerName,sizeName):
     size_id_match = c['sizeID'].values[0]
     return size_id_match
 
-a = get_size_id(retailerInformation.retailerName,size_measurements.sizeName)
-print(a)
+#a = get_size_id(retailerInformation.retailerName,size_measurements.sizeName)
+#print(a)
 
 def get_dimensions_of_size(sizeID):
     x = float(sizeID)
@@ -231,37 +271,40 @@ def get_dimensions_of_size(sizeID):
     size_dimensions = Dimensions(bust,waist,hip)
     return size_dimensions
 
-b = get_dimensions_of_size(a)
-print(b)
+#b = get_dimensions_of_size(a)
+#print(b)
 
-def convert_size(dimensions,retailerName):
+def convert_size_between_retailers(dimensions,retailerName):
     a = float(find_sizes_by_retailer(retailerName))
     b = find_size_within_retailer(a,customer_measurements=dimensions)
     return b
 
-c =convert_size(b,retailerInformation.retailerName)
+#c = convert_size_between_retailers(b,retailerInformation.retailerName)
 
-# interface : 
+# interface 
 
-#console = Console()
+# main menu
 
-#app = typer.Typer()
+def main():
+    options = ["1 : Find Size ", "2 : Check Fit", "3 : Convert Size","4 : Quit"]
+    terminal_menu = TerminalMenu(options,title='The Size Machine')
+    menu_entry_index = terminal_menu.show()
+    print(f"You have selected {options[menu_entry_index]}!")
 
-#@app.command(short_help='adds user')
-#def add(Customer:str):
-    #typer.echo(f"adding {customerInformation}")
+    selection = options[menu_entry_index]
+    if selection == options[0]:
+        found_size = find_size()
+        print(found_size)
+    elif selection == options[1]:
+        fit_check = check_fit()
+        print(fit_check)
+    elif selection == options[2]:
+        converted_size = convert_size()
+        convert_size()
+    elif selection == options[3]:
+        quit()
 
-#@app.command(short_help='shows all sizing')
-#def show(sizing:str):
-    #console.print("[bold magenta]Sizing Database[/bold magenta]!")
 
-    #table = Table(show_header=True,header_style="bold blue")
-    #table.add_column("#",style="dim",width=6)
-    #table.add_column("retailer",min_width=20)
-    #table.add_column("size name", min_width=12,justify="right")
+if __name__ == "__main__":
+    main()
 
-    #for idx, size_measurements in enumerate(sizing[1]):
-        #table.add_row(str(idx),size_measurements[0])
-
-#if __name__ == "__main__":
-    #app()
