@@ -21,7 +21,7 @@ source venv/bin/activate
 # Install packages from requirements.txt
 pip install -r requirements.txt
 
-# Run Expense Tracker Application
+# run application
 python3 main.py
 
 # deactivate virtual environment

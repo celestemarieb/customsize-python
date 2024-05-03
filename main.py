@@ -75,17 +75,10 @@ def view_sizing():
 # key features 
 # feature 1 : find size
 
-def find_size():
-    print('Enter your details and the name of the retailer. We will find your size!')
-    # New Customer 
-    customer_details = create_customer()
-    customer_bust = collect_bust_measurement()
-    customer_waist = collect_waist_measurement()
-    customer_hip = collect_hip_measurement()
-    customer_measurements = collect_body_measurements(customer_details.customerID,customer_bust,customer_waist,customer_hip)
-    #Existing Customer
-    #customer_details = find_customer()
-    #customer_information = find_body_measurements(customer_details[1])
+def find_size(Body):
+    print('Enter the name of the retailer. We will find your size!')
+    customer_details = Customer
+    customer_measurements = Body(customer_details.customerID,customer_details.bust,customer_details.waist,customer_details.hip)
     retailer_name_input = input("Retailer Name: ")
     selected_size_chart_ID = find_sizes_by_retailer(retailer_name_input)
     size_match = find_size_within_retailer(selected_size_chart_ID,customer_measurements)
@@ -95,17 +88,10 @@ def find_size():
 
 # feature 2 : check fit 
 
-def check_fit_dialogue():
+def check_fit_dialogue(Customer):
     print('Enter the retailer and size. We will check your fit!')
-     # New Customer 
-    customer_details = create_customer()
-    customer_bust = collect_bust_measurement()
-    customer_waist = collect_waist_measurement()
-    customer_hip = collect_hip_measurement()
-    customer_measurements = collect_body_measurements(customer_details.customerID,customer_bust,customer_waist,customer_hip)
-    #Existing Customer
-    #customer_details = find_customer()
-    #customer_information = find_body_measurements(customer_details[1])
+    customer_details = Customer
+    customer_measurements = Body(customer_details.customerID,customer_details.bust,customer_details.waist,customer_details.hip)
     retailer_name_input = input("Retailer Name: ")
     size_name_input = input("Size Name: ")
     fit = check_fit(customer_measurements,retailer_name_input,size_name_input)
@@ -139,18 +125,6 @@ def convert_size():
     print(f'A {size_name_input} at {current_retailer_name_input} is equivalent to a {size_match} at {new_retailer_name_input}')
     return size_match
 
-# customer 
-
-def check_customer():
-    while True:
-        try:
-            username_input = string(input("Enter your username: "))
-            break
-        except ValueError:
-            print("Please enter your username, it will include numbers and letters e.g. 'emptyBobolink0'")
-
-
-    return currentCustomer
 
 # id generation
 
@@ -173,22 +147,39 @@ def create_customer():
     #password_input = input("password: ")
     password_input = ""
     newCustomer = Customer(id_input,username_input,password_input)
-    customers.loc[id_input] = [id_input,username_input,password_input,"","",""]
+    body_information = collect_body_measurements(id_input)
+    customers.loc[id_input] = [id_input,username_input,password_input,body_information.bust,body_information.waist,body_information.hip]
     update_customer_database()
-    return newCustomer
+    return [newCustomer,body_information]
 
 # find existing customer 
 
-def find_customer():
-    customer_exists = True
-    username_input = input("Your username: ")
-    a = customers.query('(customerUserName == @username_input)')
+def find_customer(customerUserName):
+    a = customers.query('(customerUserName == @customerUserName)')
     b = a.head()
-    customer_match = b['customerUserName'].values[0]
-    if customer_match == username_input:
-        customer_exists = True
-    else: customer_exists = False
-    return [customer_exists,customer_match]
+    while True:
+        try:
+            customer_match = b['customerUserName'].values[0]
+            customer_exists = True
+            break
+        except Exception:
+            print("Customer not found")
+            customer_exists = False
+            break
+    return customer_exists
+
+# customer 
+
+def check_customer():
+    name_input = str(input("Enter your username: "))
+    existing_customer_search_result = find_customer(name_input)
+    if existing_customer_search_result == False:
+        current_customer = create_customer()
+        print(current_customer)
+    elif existing_customer_search_result == True:
+        # populate current customer object from database
+        current_customer = Customer("","nameinput","")
+    return current_customer
 
 # collect dimensions
 
@@ -208,8 +199,6 @@ def collect_bust_measurement():
             print(f"{measurement_input_warning}")
     return bust_measurement
 
-collect_bust_measurement()
-
 def collect_waist_measurement():
     while True:
         try:
@@ -221,8 +210,6 @@ def collect_waist_measurement():
         except Exception:
             print(f"{measurement_input_warning}")
     return waist_measurement
-
-collect_waist_measurement()
 
 def collect_hip_measurement():
     while True:
@@ -236,11 +223,12 @@ def collect_hip_measurement():
             print(f"{measurement_input_warning}")
     return hip_measurement
 
-collect_hip_measurement()
-
 # collect customer measurements
 
-def collect_body_measurements(customerId, customer_bust,customer_waist,customer_hip): 
+def collect_body_measurements(customerId): 
+    customer_bust = collect_bust_measurement()
+    customer_waist = collect_waist_measurement()
+    customer_hip = collect_hip_measurement()
     body_information = Body (customerId,customer_bust,customer_waist,customer_hip)
     customers.at[customerId,'customer_bust'] = customer_bust
     customers.at[customerId,'customer_waist'] = customer_waist
@@ -351,35 +339,37 @@ def convert_size_between_retailers(Dimensions,retailerName):
 # main menu
 
 def main():
-    options = ["1 : Find Size ", "2 : Check Fit", "3 : Convert Size","4 : Add Retailer","5 : Add Size","6 : View Sizing Database","7 : Quit"]
-    terminal_menu = TerminalMenu(options,title='The Size Machine')
+    options = ["0 : Add Profile","1 : Find Size ", "2 : Check Fit", "3 : Convert Size","4 : Add Retailer","5 : Add Size","6 : View All Sizes","7 : Quit"]
+    terminal_menu = TerminalMenu(options,title='Size O Matic')
     menu_entry_index = terminal_menu.show()
     print(f"You have selected {options[menu_entry_index]}!")
-
     selection = options[menu_entry_index]
     if selection == options[0]:
-        # check_customer -- pass customer object 
-        find_size()
+        current_customer = create_customer()
         main()
     elif selection == options[1]:
-        # customer check -- pass customer object
-        check_fit_dialogue()
+        current_customer = check_customer() 
+        find_size(current_customer)
         main()
     elif selection == options[2]:
-        convert_size()
+        current_customer = check_customer()
+        check_fit_dialogue(current_customer)
         main()
     elif selection == options[3]:
-        create_retailer()
+        convert_size()
         main()
     elif selection == options[4]:
+        create_retailer()
+        main()
+    elif selection == options[5]:
         # check retailer -- pass retailer object 
         create_size()
         main()
-    elif selection == options[5]:
+    elif selection == options[6]:
         #view sizing database 
         view_sizing()
         main()
-    elif selection == options[6]:
+    elif selection == options[7]:
         quit()
 
 if __name__ == "__main__":
