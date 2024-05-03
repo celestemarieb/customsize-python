@@ -45,7 +45,6 @@ def update_retailer_database():
 
 retailers = create_retailer_database()
 retailers = populate_retailer_database()
-retailers = update_retailer_database()
 
 # store sizing information 
 
@@ -66,7 +65,6 @@ def update_sizing_database():
 
 sizing = create_sizing_database()
 sizing = populate_sizing_database()
-sizing = update_sizing_database()
 
 def view_sizing():
     sizing_snapshot = rprint(sizing)
@@ -138,19 +136,7 @@ def generate_new_username():
     generated_username = generate_username()
     return generated_username
 
-# create new customer
 
-def create_customer():
-    id_input = generate_id()
-    username_input = generate_new_username()
-    print(f'Your username will be {username_input}')
-    #password_input = input("password: ")
-    password_input = ""
-    newCustomer = Customer(id_input,username_input,password_input)
-    body_information = collect_body_measurements(id_input)
-    customers.loc[id_input] = [id_input,username_input,password_input,body_information.bust,body_information.waist,body_information.hip]
-    update_customer_database()
-    return [newCustomer,body_information]
 
 # find existing customer 
 
@@ -246,6 +232,19 @@ def find_body_measurements(customerUserName):
     body_information = Body (customerID,customer_bust,customer_waist,customer_hip)
     return body_information
 
+# create new customer
+
+def create_customer():
+    id_input = generate_id()
+    username_input = generate_new_username()
+    print(f'Your username will be {username_input}')
+    #password_input = input("password: ")
+    password_input = ""
+    new_customer = Customer(id_input,username_input,password_input)
+    customers.loc[id_input] = [id_input,username_input,password_input,"","",""]
+    update_customer_database()
+    return new_customer.customerID
+
 # add new retailer to database
 
 def create_retailer():
@@ -263,7 +262,7 @@ def create_size():
     name_input = input("Size Name: ")
     id_input = generate_id()
     retailer_name_input = input("Retailer Name: ")
-    a = retailers.query('(RetailerName == retailer_name_input)')
+    a = retailers.query('(RetailerName == @retailer_name_input)')
     b = a.head()
     size_chart_id = b['sizeChartID'].values[0]
     size_bust = collect_bust_measurement()
@@ -345,7 +344,8 @@ def main():
     print(f"You have selected {options[menu_entry_index]}!")
     selection = options[menu_entry_index]
     if selection == options[0]:
-        current_customer = create_customer()
+        current_customer_id = create_customer()
+        current_customer_measurements = collect_body_measurements(current_customer_id)
         main()
     elif selection == options[1]:
         current_customer = check_customer() 
