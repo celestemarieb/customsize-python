@@ -247,8 +247,6 @@ def check_customer():
         current_customer_id = customers.getvalue(name_input,'CustomerID')
     return current_customer_id
 
-check_customer()
-
 # add new retailer to database
 
 def create_retailer():
