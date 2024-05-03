@@ -2,18 +2,18 @@
 from sys import argv
 
 # external packages 
-
 import numpy as np
 import pandas as pd
 from simple_term_menu import TerminalMenu
+import uuid
+from random_username.generate import generate_username
+from rich import print as rprint
 
 # import schema 
-
 from schema import *
 
 # databases 
 # store customer information
-
 def create_customer_database():
     customer_columns = ['CustomerID','customerUserName','customerPassword','customer_bust','customer_waist','customer_hip']
     customers = pd.DataFrame(columns=customer_columns)
@@ -28,7 +28,6 @@ def update_customer_database():
 customers = create_customer_database()
 
 # store retailer information
-
 def create_retailer_database():
     retailer_columns = ['retailerID','sizeChartID','retailerName']
     retailers = pd.DataFrame(columns=retailer_columns)
@@ -68,6 +67,10 @@ def update_sizing_database():
 sizing = create_sizing_database()
 sizing = populate_sizing_database()
 sizing = update_sizing_database()
+
+def view_sizing():
+    sizing_snapshot = rprint(sizing)
+    return sizing_snapshot
 
 # key features 
 # feature 1 : find size
@@ -136,13 +139,39 @@ def convert_size():
     print(f'A {size_name_input} at {current_retailer_name_input} is equivalent to a {size_match} at {new_retailer_name_input}')
     return size_match
 
-# customer management 
+# customer 
+
+def check_customer():
+    while True:
+        try:
+            username_input = string(input("Enter your username: "))
+            break
+        except ValueError:
+            print("Please enter your username, it will include numbers and letters e.g. 'emptyBobolink0'")
+
+
+    return currentCustomer
+
+# id generation
+
+def generate_id():
+    generated_id = uuid.uuid4()
+    return generated_id
+
+# username generation 
+
+def generate_new_username():
+    generated_username = generate_username()
+    return generated_username
+
 # create new customer
 
 def create_customer():
-    id_input = input("User ID: ")
-    username_input = input("username: ")
-    password_input = input("password: ")
+    id_input = generate_id()
+    username_input = generate_new_username()
+    print(f'Your username will be {username_input}')
+    #password_input = input("password: ")
+    password_input = ""
     newCustomer = Customer(id_input,username_input,password_input)
     customers.loc[id_input] = [id_input,username_input,password_input,"","",""]
     update_customer_database()
@@ -152,89 +181,108 @@ def create_customer():
 
 def find_customer():
     customer_exists = True
-    id_input = input("User ID: ")
-    a = customers.query('(customerID == id_input)')
+    username_input = input("Your username: ")
+    a = customers.query('(customerUserName == @username_input)')
     b = a.head()
-    customer_match = b['customerID'].values[0]
-    if customer_match == id_input:
+    customer_match = b['customerUserName'].values[0]
+    if customer_match == username_input:
         customer_exists = True
     else: customer_exists = False
     return [customer_exists,customer_match]
 
 # collect dimensions
 
+measurement_input_warning = "Please enter the measurement in centimetres (e.g. 75.5)"
+
+measurement_range_warning = "Hmm that number seems outside the usual range (between 0 and 500), double check your measurements"
+
 def collect_bust_measurement():
-    bust_measurement = input("Bust: ")
+    while True:
+        try:
+            bust_measurement = float(input("Bust (in centimetres): "))
+            if bust_measurement < 0 or bust_measurement > 300:
+                print(f"{measurement_range_warning}")
+            else:
+                break
+        except Exception:
+            print(f"{measurement_input_warning}")
     return bust_measurement
 
+collect_bust_measurement()
+
 def collect_waist_measurement():
-    waist_measurement = input("Waist: ")
+    while True:
+        try:
+            waist_measurement = float(input("Waist (in centimetres): "))
+            if waist_measurement < 0 or waist_measurement > 300:
+                print(f"{measurement_range_warning}")
+            else:
+                break
+        except Exception:
+            print(f"{measurement_input_warning}")
     return waist_measurement
 
+collect_waist_measurement()
+
 def collect_hip_measurement():
-    hip_measurement = input("Hip: ")
+    while True:
+        try:
+            hip_measurement = float(input("Hip (in centimetres): "))
+            if hip_measurement < 0 or hip_measurement > 300:
+                print(f"{measurement_range_warning}")
+            else:
+                break
+        except Exception:
+            print(f"{measurement_input_warning}")
     return hip_measurement
+
+collect_hip_measurement()
 
 # collect customer measurements
 
 def collect_body_measurements(customerId, customer_bust,customer_waist,customer_hip): 
-    bodyInformation = Body (customerId,customer_bust,customer_waist,customer_hip)
+    body_information = Body (customerId,customer_bust,customer_waist,customer_hip)
     customers.at[customerId,'customer_bust'] = customer_bust
     customers.at[customerId,'customer_waist'] = customer_waist
     customers.at[customerId,'customer_hip'] = customer_hip
     update_customer_database()
-    return bodyInformation
+    return body_information
 
-def find_body_measurements(customerID):
-    a = customers.query('(customerID == customerID)')
+def find_body_measurements(customerUserName):
+    a = customers.query('(customerUserName == @customerUserName)')
     b = a.head()
     customerID = b['customerID'].values[0]
     customer_bust = b['customer_bust'].values[0]
     customer_waist = b['customer_waist'].values[0]
     customer_hip = b['customer_hip'].values[0]
-    bodyInformation = Body (customerID,customer_bust,customer_waist,customer_hip)
-    return bodyInformation
+    body_information = Body (customerID,customer_bust,customer_waist,customer_hip)
+    return body_information
 
-# create new retailer 
+# add new retailer to database
 
 def create_retailer():
-    id_input = input("Retailer ID: ")
+    id_input = generate_id()
     name_input = input("Retailer Name: ")
-    size_chart_id = input("Size Chart ID:")
+    size_chart_id = generate_id()
     newRetailer = Retailer (size_chart_id,id_input,name_input)
     retailers.loc[id_input] = [id_input,size_chart_id,name_input]
     update_retailer_database()
     return newRetailer
-
-#retailerInformation = createRetailer()
-
-# create size chart  
-
-def create_size_chart():
-    id_input = input("Size Chart ID: ")
-    size_names_input = []
-    newSizeChart = SizeChart (id_input,size_names_input)
-    return newSizeChart 
-
-#sizeChartInformation = createSizeChart()
-
-def get_sizechartID(sizeChart):
-    sizeChartID = sizeChart.sizeChartID
-    return sizeChartID
-
-#newSizeChartID = getSizeChartID(sizeChartInformation)
     
-# create size 
+# add new size to database
 
 def create_size():
     name_input = input("Size Name: ")
-    id_input = input("Size ID: ")
-    sizeChartInformation.sizeNames.append(name_input)
+    id_input = generate_id()
+    retailer_name_input = input("Retailer Name: ")
+    a = retailers.query('(RetailerName == retailer_name_input)')
+    b = a.head()
+    size_chart_id = b['sizeChartID'].values[0]
     size_bust = collect_bust_measurement()
     size_waist = collect_waist_measurement()
     size_hip = collect_hip_measurement()
-    newSize = Size(name_input,newSizeChartID,id_input,size_bust,size_waist,size_hip)
-    sizing.loc[id_input] = [id_input,newSizeChartID,name_input,size_bust,size_waist,size_hip]
+    newSize = Size(name_input,size_chart_id,id_input,size_bust,size_waist,size_hip)
+    sizing.loc[id_input] = [id_input,size_chart_id,name_input,size_bust,size_waist,size_hip]
     update_sizing_database()
     return newSize
 
@@ -254,7 +302,7 @@ def evaluate_fit(customer,dimensions):
 #fit_determination = evaluateFit(customer_measurements,new_dimensions)
 
 
-#search 
+# search 
 
 def find_sizes_by_retailer(retailerName):
     val1 = retailers.loc[retailers['retailerName']==retailerName]
@@ -303,19 +351,35 @@ def convert_size_between_retailers(Dimensions,retailerName):
 # main menu
 
 def main():
-    options = ["1 : Find Size ", "2 : Check Fit", "3 : Convert Size","4 : Quit"]
+    options = ["1 : Find Size ", "2 : Check Fit", "3 : Convert Size","4 : Add Retailer","5 : Add Size","6 : View Sizing Database","7 : Quit"]
     terminal_menu = TerminalMenu(options,title='The Size Machine')
     menu_entry_index = terminal_menu.show()
     print(f"You have selected {options[menu_entry_index]}!")
 
     selection = options[menu_entry_index]
     if selection == options[0]:
+        # check_customer -- pass customer object 
         find_size()
+        main()
     elif selection == options[1]:
+        # customer check -- pass customer object
         check_fit_dialogue()
+        main()
     elif selection == options[2]:
         convert_size()
+        main()
     elif selection == options[3]:
+        create_retailer()
+        main()
+    elif selection == options[4]:
+        # check retailer -- pass retailer object 
+        create_size()
+        main()
+    elif selection == options[5]:
+        #view sizing database 
+        view_sizing()
+        main()
+    elif selection == options[6]:
         quit()
 
 if __name__ == "__main__":

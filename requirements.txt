@@ -1,0 +1,3 @@
+numpy
+pandas
+simple_term_menu

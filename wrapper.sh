@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# confirm python is installed
 if ! [[ -x "$(command -v python)" ]]
 then
   echo 'Error: 
@@ -8,8 +9,20 @@ then
   exit 1
 fi
 
-# create virtual environment 
+# confirm virtual environment exists 
+if [ ! -d "venv" ]; then
+    echo "Error: Virtual environment could not be found. Please set up the virtual environment by typing 'python3 -m venv venv' and try again."
+    exit 1
+fi
 
-# add packages 
+# activate virtual environment
+source venv/bin/activate
 
-python ./main.py
+# Install packages from requirements.txt
+pip install -r requirements.txt
+
+# Run Expense Tracker Application
+python3 main.py
+
+# deactivate virtual environment
+deactivate

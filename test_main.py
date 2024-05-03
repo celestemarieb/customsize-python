@@ -3,7 +3,7 @@ import pytest
 from main import *
 from schema import *
 
-# fit evaluation (customer to size)
+# fit evaluation 
 # exact match
 
 def test_evaluate_fit():
@@ -17,7 +17,7 @@ def test_evaluate_fit():
     # Then 
     assert fit == True
 
-
+# no match 
 def test_evaluate_fit():
     # Given 
     customer_measurements = Body ('01','77','58','83.5')
@@ -28,3 +28,8 @@ def test_evaluate_fit():
 
     # Then 
     assert fit == False
+
+# id generation 
+
+def test_generate_id():
+    pass
