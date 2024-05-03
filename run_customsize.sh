@@ -9,12 +9,6 @@ then
   exit 1
 fi
 
-# confirm virtual environment exists 
-if [ ! -d "venv" ]; then
-    echo "Error: Virtual environment could not be found. Please set up the virtual environment by typing 'python3 -m venv venv' and try again."
-    exit 1
-fi
-
 # activate virtual environment
 source venv/bin/activate
 

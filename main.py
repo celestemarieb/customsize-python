@@ -26,6 +26,7 @@ def update_customer_database():
     return customers
 
 customers = create_customer_database()
+customers = update_customer_database()
 
 # store retailer information
 def create_retailer_database():
@@ -45,6 +46,7 @@ def update_retailer_database():
 
 retailers = create_retailer_database()
 retailers = populate_retailer_database()
+retailers = update_retailer_database()
 
 # store sizing information 
 
@@ -65,6 +67,7 @@ def update_sizing_database():
 
 sizing = create_sizing_database()
 sizing = populate_sizing_database()
+sizing = update_sizing_database()
 
 def view_sizing():
     sizing_snapshot = rprint(sizing)
@@ -76,20 +79,27 @@ def view_sizing():
 def find_size(customerID):
     print('Enter the name of the retailer. We will find your size!')
     # query DB to find measurements
-    customer_measurements = Body(customerID,customer_details.bust,customer_details.waist,customer_details.hip)
+    a = customers.loc[(customers['CustomerID'] == customerID),'customer_bust']
+    bust_measurement = a.iloc[0]
+    b = customers.loc[(customers['CustomerID'] == customerID),'customer_waist']
+    waist_measurement = b.iloc[0]
+    c = customers.loc[(customers['CustomerID'] == customerID),'customer_hip']
+    hip_measurement = c.iloc[0]
+    customer_dimensions = Dimensions(bust_measurement,waist_measurement,hip_measurement)
     retailer_name_input = input("Retailer Name: ")
     selected_size_chart_ID = find_sizes_by_retailer(retailer_name_input)
-    size_match = find_size_within_retailer(selected_size_chart_ID,customer_measurements)
+    size_match = find_size_within_retailer(selected_size_chart_ID,customer_dimensions)
     print('We found your size!')
     print(f'At {retailer_name_input} the size which would match you best is {size_match}')
     return size_match
 
 # feature 2 : check fit 
 
-def check_fit_dialogue(Customer):
+def check_fit_dialogue(customerID):
     print('Enter the retailer and size. We will check your fit!')
-    customer_details = Customer
-    customer_measurements = Body(customer_details.customerID,customer_details.bust,customer_details.waist,customer_details.hip)
+    a = customers.loc[customers['CustomerID'] == customerID,'customerUserName']
+    customer_user_name = a.iloc[0]
+    customer_measurements = find_body_measurements(customer_user_name)
     retailer_name_input = input("Retailer Name: ")
     size_name_input = input("Size Name: ")
     fit = check_fit(customer_measurements,retailer_name_input,size_name_input)
@@ -114,13 +124,25 @@ def convert_size():
     print('Enter the retailers and size name. Then enter the name of the retailer you would like the size to be converted to. We will find your size!')
     current_retailer_name_input = input("Retailer Name: ")
     size_name_input = input("Size Name: ")
-    #size_id = get_size_id(current_retailer_name_input,size_name_input)
-    size_id = '111'
-    size_dimensions = get_dimensions_of_size(size_id)
+    while True:
+        try:
+            size_id = get_size_id(current_retailer_name_input,size_name_input)
+            size_dimensions = get_dimensions_of_size(size_id)
+            break
+        except Exception:
+            print("Add this size to our database to complete conversion")
+            break
     new_retailer_name_input = input("Retailer Name: ")
-    size_match = convert_size_between_retailers(size_dimensions,new_retailer_name_input)
-    print('We found your size!')
-    print(f'A {size_name_input} at {current_retailer_name_input} is equivalent to a {size_match} at {new_retailer_name_input}')
+    while True:
+        try:
+            size_match = convert_size_between_retailers(size_dimensions,new_retailer_name_input)
+            print('We found your size!')
+            print(f'{size_name_input} at {current_retailer_name_input} is equivalent to a {size_match} at {new_retailer_name_input}')
+            break
+        except Exception:
+            print('An converted size could not be found! Please try again later')
+            size_match = 'nil'
+            break
     return size_match
 
 
@@ -135,9 +157,6 @@ def generate_id():
 def generate_new_username():
     generated_username = generate_username()
     return generated_username
-
-
-
 
 # collect dimensions
 
@@ -195,12 +214,14 @@ def collect_body_measurements(customerId):
     return body_information
 
 def find_body_measurements(customerUserName):
-    a = customers.query('(customerUserName == @customerUserName)')
-    b = a.head()
-    customerID = b['customerID'].values[0]
-    customer_bust = b['customer_bust'].values[0]
-    customer_waist = b['customer_waist'].values[0]
-    customer_hip = b['customer_hip'].values[0]
+    a = customers.loc[customers['customerUserName'] == customerUserName,'CustomerID']
+    customerID = a.iloc[0]
+    b = customers.loc[customers['customerUserName'] == customerUserName,'customer_bust']
+    customer_bust = b.iloc[0]
+    c = customers.loc[customers['customerUserName'] == customerUserName,'customer_waist']
+    customer_waist = c.iloc[0]
+    d = customers.loc[customers['customerUserName'] == customerUserName,'customer_hip']
+    customer_hip = d.iloc[0]
     body_information = Body (customerID,customer_bust,customer_waist,customer_hip)
     return body_information
 
@@ -221,11 +242,10 @@ def create_customer():
 # find existing customer 
 
 def find_customer(customerUserName):
-    a = customers.query('(customerUserName == @customerUserName)')
-    b = a.head()
     while True:
         try:
-            customer_match = b['customerUserName'].values[0]
+            a = customers.loc[customers['customerUserName'] == customerUserName,'customerUserName']
+            customer_match = a.iloc[0]
             customer_exists = True
             break
         except Exception:
@@ -264,9 +284,16 @@ def create_size():
     name_input = input("Size Name: ")
     id_input = generate_id()
     retailer_name_input = input("Retailer Name: ")
-    a = retailers.query('(RetailerName == @retailer_name_input)')
-    b = a.head()
-    size_chart_id = b['sizeChartID'].values[0]
+    while True:
+        try:
+            a = retailers.loc[(retailers['retailerName'] == retailer_name_input)]
+            b = a.head()
+            size_chart_id = b['sizeChartID'].values[0]
+            break
+        except Exception:
+            print("Retailer not found, please add retailer details before creating a size")
+            new_retailer = create_retailer()
+            size_chart_id = new_retailer.sizeChartID
     size_bust = collect_bust_measurement()
     size_waist = collect_waist_measurement()
     size_hip = collect_hip_measurement()
@@ -274,10 +301,6 @@ def create_size():
     sizing.loc[id_input] = [id_input,size_chart_id,name_input,size_bust,size_waist,size_hip]
     update_sizing_database()
     return newSize
-
-#size_measurements = createSize()
-
-#new_dimensions = Dimensions(size_measurements.bust,size_measurements.waist,size_measurements.hip)
 
 # evaluate fit
 
@@ -288,29 +311,34 @@ def evaluate_fit(customer,dimensions):
     else: fit = False
     return fit
 
-#fit_determination = evaluateFit(customer_measurements,new_dimensions)
-
-
 # search 
 
 def find_sizes_by_retailer(retailerName):
-    val1 = retailers.loc[retailers['retailerName']==retailerName]
-    val2 = val1['sizeChartID'].values[0]
-    return val2
+    size_chart_ID = 0
+    while True:
+        try:
+            filtered_values = retailers.loc[retailers['retailerName']==retailerName]
+            size_chart_ID = filtered_values['sizeChartID'].values[0]
+            break
+        except Exception:
+            print("No sizes available for this retailer")
+            size_chart_ID = 0
+            break
+    return size_chart_ID
 
-####
 def find_size_within_retailer(sizeChartID,Dimensions):
-    w = sizeChartID
-    x = Dimensions.bust
-    y = Dimensions.waist
-    z = Dimensions.hip
-    a = sizing.query('sizeChartID==@w and size_bust == @x and size_waist == @y and size_hip == @z')
-    b = a.head()
-    size_match = b['sizeName'].values[0]
+    while True:
+        try:
+            a = sizing.loc[(sizing['sizeChartID'] == sizeChartID) & (sizing['size_bust'] == Dimensions.bust) & (sizing['size_waist'] == Dimensions.waist) & (sizing['size_hip'] == Dimensions.hip),'sizeName']
+            size_match = a.iloc[0]
+            break
+        except Exception:
+            print("Match could not be found")
+            main()
     return size_match
 
 # retrieval 
-####
+
 def get_size_id(retailerName,sizeName):
     a = find_sizes_by_retailer(retailerName)
     b = sizing.query('(sizeChartID == @a) and (sizeName == @sizeName)')
@@ -318,23 +346,28 @@ def get_size_id(retailerName,sizeName):
     size_id_match = c['sizeID'].values[0]
     return size_id_match
 
-
 def get_dimensions_of_size(sizeID):
-    x = float(sizeID)
-    a = sizing.query('(sizeID==@sizeID)')
-    b = a.head()
-    bust = b[b['size_bust']]
-    waist = b[b['size_waist']]
-    hip = b[b['size_hip']]
-    size_dimensions = Dimensions(bust,waist,hip)
+    a = sizing.loc[(sizing['sizeID'] == sizeID),'size_bust']
+    bust_measurement = a.iloc[0]
+    b = sizing.loc[(sizing['sizeID'] == sizeID),'size_waist']
+    waist_measurement = b.iloc[0]
+    c = sizing.loc[(sizing['sizeID'] == sizeID),'size_hip']
+    hip_measurement = c.iloc[0]
+    size_dimensions = Dimensions(bust_measurement,waist_measurement,hip_measurement)
     return size_dimensions
 
 # conversion  
 
 def convert_size_between_retailers(Dimensions,retailerName):
-    a = float(find_sizes_by_retailer(retailerName))
+    a = find_sizes_by_retailer(retailerName)
     b = find_size_within_retailer(a,Dimensions)
     return b
+
+#size_measurements = create_size()
+
+#new_dimensions = Dimensions(size_measurements.bust,size_measurements.waist,size_measurements.hip)
+
+#size_match = convert_size_between_retailers(new_dimensions,'asos')
 
 # interface
 # main menu
