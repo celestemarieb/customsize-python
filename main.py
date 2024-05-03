@@ -73,10 +73,10 @@ def view_sizing():
 # key features 
 # feature 1 : find size
 
-def find_size(Body):
+def find_size(customerID):
     print('Enter the name of the retailer. We will find your size!')
-    customer_details = Customer
-    customer_measurements = Body(customer_details.customerID,customer_details.bust,customer_details.waist,customer_details.hip)
+    # query DB to find measurements
+    customer_measurements = Body(customerID,customer_details.bust,customer_details.waist,customer_details.hip)
     retailer_name_input = input("Retailer Name: ")
     selected_size_chart_ID = find_sizes_by_retailer(retailer_name_input)
     size_match = find_size_within_retailer(selected_size_chart_ID,customer_measurements)
@@ -138,34 +138,6 @@ def generate_new_username():
 
 
 
-# find existing customer 
-
-def find_customer(customerUserName):
-    a = customers.query('(customerUserName == @customerUserName)')
-    b = a.head()
-    while True:
-        try:
-            customer_match = b['customerUserName'].values[0]
-            customer_exists = True
-            break
-        except Exception:
-            print("Customer not found")
-            customer_exists = False
-            break
-    return customer_exists
-
-# customer 
-
-def check_customer():
-    name_input = str(input("Enter your username: "))
-    existing_customer_search_result = find_customer(name_input)
-    if existing_customer_search_result == False:
-        current_customer = create_customer()
-        print(current_customer)
-    elif existing_customer_search_result == True:
-        # populate current customer object from database
-        current_customer = Customer("","nameinput","")
-    return current_customer
 
 # collect dimensions
 
@@ -244,6 +216,38 @@ def create_customer():
     customers.loc[id_input] = [id_input,username_input,password_input,"","",""]
     update_customer_database()
     return new_customer.customerID
+
+
+# find existing customer 
+
+def find_customer(customerUserName):
+    a = customers.query('(customerUserName == @customerUserName)')
+    b = a.head()
+    while True:
+        try:
+            customer_match = b['customerUserName'].values[0]
+            customer_exists = True
+            break
+        except Exception:
+            print("Customer not found")
+            customer_exists = False
+            break
+    return customer_exists
+
+# customer 
+
+def check_customer():
+    name_input = str(input("Enter your username: "))
+    existing_customer_search_result = find_customer(name_input)
+    if existing_customer_search_result == False:
+        current_customer_id = create_customer()
+        collect_body_measurements(current_customer_id)
+    elif existing_customer_search_result == True:
+        # populate current customer object from database
+        current_customer_id = customers.getvalue(name_input,'CustomerID')
+    return current_customer_id
+
+check_customer()
 
 # add new retailer to database
 
@@ -348,12 +352,12 @@ def main():
         current_customer_measurements = collect_body_measurements(current_customer_id)
         main()
     elif selection == options[1]:
-        current_customer = check_customer() 
-        find_size(current_customer)
+        current_customer_id = check_customer()
+        find_size(current_customer_id)
         main()
     elif selection == options[2]:
-        current_customer = check_customer()
-        check_fit_dialogue(current_customer)
+        current_customer_id = check_customer()
+        check_fit_dialogue(current_customer_id)
         main()
     elif selection == options[3]:
         convert_size()
