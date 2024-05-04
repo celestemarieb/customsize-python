@@ -133,7 +133,7 @@ There many be many 'Size Chart's associated with a Retailer
 A 'Body' object is then associated (via CustomerID) with a 'Customer'. 
 This is a one-to-one relationship. 
 
-![class diagram](./assets/assets/schema.png)
+![class diagram](./assets/schema.png)
 
 ## Technologies 
 ### Languages Used 
