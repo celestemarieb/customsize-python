@@ -215,14 +215,14 @@ def collect_body_measurements(customerId):
 
 def find_body_measurements(customerUserName):
     a = customers.loc[customers['customerUserName'] == customerUserName,'CustomerID']
-    customerID = a.iloc[0]
+    customer_id = a.iloc[0]
     b = customers.loc[customers['customerUserName'] == customerUserName,'customer_bust']
     customer_bust = b.iloc[0]
     c = customers.loc[customers['customerUserName'] == customerUserName,'customer_waist']
     customer_waist = c.iloc[0]
     d = customers.loc[customers['customerUserName'] == customerUserName,'customer_hip']
     customer_hip = d.iloc[0]
-    body_information = Body (customerID,customer_bust,customer_waist,customer_hip)
+    body_information = Body (customer_id,customer_bust,customer_waist,customer_hip)
     return body_information
 
 # create new customer
