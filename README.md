@@ -31,9 +31,9 @@ For further information about the complexities of fast fashion returns check out
 
 ## how to install
 
-###mac os / linux
+### mac os / linux
 
-###wsl
+### wsl
 
 ## walkthrough 
 
@@ -49,45 +49,45 @@ After creating a profile they are returned to Feature #1 or #2 to continue their
 
 ## features 
 
-###0: Add Profile 
+### 0: Add Profile 
 
 The user is given a username and provides their measurements (including bust, waist and hip measurements) to be stored alongside their customer record in customers.csv. 
 
-###1: Find Fit 
+### 1: Find Fit 
 
 The user nominates a retailer and is provided with a size from that retailer that matches their measurements exactly. 
 
-###2: Check Fit 
+### 2: Check Fit 
 
 The user nominates a retailer and size (from that retailer). The user is informed whether or not a garment from that retailer in that size will fit their measurements exactly or not. 
 
-###3: Convert Size 
+### 3: Convert Size 
 
 The user nominates a retailer and size (from that retailer). The user then selects another retailer they would like to purchase from. The user is informed whether a size at the new retailer exactly matches the dimensions of the size from the original retailer and if so, which size. 
 
-###4: Add Retailer 
+### 4: Add Retailer 
 
 The user is able to add a retailer to the database. An ID and size chart ID is generated for the retailer and this is stored alongside the new retailer record in retailers.csv. 
 
-###5: Add Size 
+### 5: Add Size 
 
 The user is able to add a new size to a retailer's record (size chart) in the database. The user provides the name of the retailer, the size name and size dimensions. These details are stored alongside the retailer ID and size chart id in sizing.csv. 
 
 If the retailer does not yet exist the user is prompted to create a retailer and then can resume adding a size. 
 
-###6: View All Sizes 
+### 6: View All Sizes 
 
 The user is able to view all the sizes stored in the sizing database (stored in sizing.csv) and their measurements.
 
 ## unimplemented features 
 
-###authentication 
+### authentication 
 
 Currently, users are able to retrieve their measurements by providing their username. 
 
 Ideally users would be required to provide a matching password prior to accessing features #1 and #2. In this way, access to customer information would be further restricted. 
 
-###close-match
+### close-match
 
 Currently, the application requires an exact match between measurements (customer to size, or size to size) to determine equivalence or 'fit'. 
 
@@ -95,13 +95,13 @@ Ideally, the application would be able to determine and provide information abou
 
 This would provide more useful information to a user about sizes that may loosely fit their dimensions or the closest suitable size in a range. 
 
-###update "#6: View All Size" table to include retailer names 
+### update "#6: View All Size" table to include retailer names 
 
 Currently, users are able to view all sizes available in the database via Feature # 6: View All Sizes. However, the RetailerID is provided alongside each size. This ID is not meaningful to a user.
 
 Providing the retailer name would enable the user to better understand and make use of the sizing data. 
 
-###menswear
+### menswear
 
 Currently, the application is optimised for womenswear and as a result includes 'bust' as a key dimension and measurement. 
 
@@ -139,6 +139,7 @@ This is a one-to-one relationship.
 ### Languages Used 
 
 Python 3
+
 BASH
 
 ### Python Libraries 
@@ -171,9 +172,9 @@ A full list of dependencies is contained within requirements.txt.
 
 ### Other 
 
-Github (source control)
-Gitub Projects (project management)
-vscode (development)
+- Github (source control)
+- Gitub Projects (project management)
+- vscode (development)
 
 ## Credits and Acknowledgments 
 ### Sizing Data 
@@ -182,13 +183,14 @@ The sizing data prepopulated into the application is derived from publicly avail
 
 Links to original sources are provided below: 
 
-Uniqlo: https://www.uniqlo.com/ca/en/size/409212.html
-ASOS: https://www.asos.com/au/discover/size-charts/women/
+- Uniqlo: https://www.uniqlo.com/ca/en/size/409212.html
+
+- ASOS: https://www.asos.com/au/discover/size-charts/women/
 
 ## License
 
 Copyright (c) 2024 Celeste Bird 
 
-MIT
+[MIT](./license.txt)
 
 
