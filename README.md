@@ -1,4 +1,4 @@
-# size o matic
+# size o matic (a.k.a customsize-python)
 ## introduction 
 
 The environmental costs of fast fashion are significant and rising. 
@@ -25,11 +25,15 @@ Please note:
 
 For further information about the complexities of fast fashion returns check out this article at the Guardian: https://www.theguardian.com/global-development/2023/mar/31/what-happens-when-we-send-back-unwanted-clothes 
 
+## github repository 
+
+[size o matic](https://github.com/celestemarieb/customsize-python)
+
 ## how to install
 
-mac os / linux
+###mac os / linux
 
-wsl
+###wsl
 
 ## walkthrough 
 
@@ -105,45 +109,65 @@ In menswear this measurement is not used and is not meaningful as a 'chest' meas
 
 To accommmodate both womenswear and menswear this measurement should renamed as 'chest' or 'chest/bust'.  
 
-## implementation  
+## Implementation  
+
+## Implementation Planning
+This project is planned and managed in a github project viewable here: https://github.com/users/celestemarieb/projects/6/views/1
+
+
+## Schema 
+
+A schema was developed and implemented in the application based on my understanding of the business domain. 
+
+It is outlined in the diagram below. 
+
+A 'Dimensions' object has the following attributes (bust, waist, hip). 
+
+A 'Body' and 'Size' object inherits those attributes from the 'Dimensions' class. 
+
+A 'Size' object is then associated (via sizeChartID) with a 'Size Chart' and then with a 'Retailer'. 
+
+There many be many 'Size's associated with one size chart. 
+There many be many 'Size Chart's associated with a Retailer
+
+A 'Body' object is then associated (via CustomerID) with a 'Customer'. 
+This is a one-to-one relationship. 
 
 ![class diagram](./assets/assets/schema.png)
-
-this project is planned and managed in a github project viewable here: https://github.com/users/celestemarieb/projects/6/views/1
 
 ## Technologies 
 ### Languages Used 
 
-Python
+Python 3
 BASH
 
 ### Python Libraries 
 
 A full list of dependencies is contained within requirements.txt. 
 
-random_username 
+[random_username](https://pypi.org/project/random-username/)
     to generate customer usernames 
 
-numpy 
+[numpy](https://pypi.org/project/numpy/)
     used to work easily with the data structures created by and features of pandas
 
-pandas
+[pandas](https://pypi.org/project/pandas/)
     used to create dataframes in order to store and manipulate data (including writing to csv)
 
-pytest 
+[pytest](https://docs.pytest.org/en/8.2.x/)
     used to create and run automated tests during development
 
-rich
+[rich](https://rich.readthedocs.io/en/stable/introduction.html)
     used to create a user-friendly display of data, in particular the table of sizing data (Feature #6 : View All Sizes)
 
-simple-term-menu 
+[simple-term-menu](https://pypi.org/project/simple-term-menu/) 
     used to create a main menu from which users can navigate through the application 
 
-uuid
-    used to generate IDs (including customerIDs, retailerIDs, sizeChartIDs and sizeIDs)
+[uuid](https://pypi.org/project/uuid/)
+    used to generate IDs for use throughout the application (including customerIDs, retailerIDs, sizeChartIDs and sizeIDs)
 
-pylint 
-    a PEP8 validator
+[pylint](https://pypi.org/project/pylint/)
+    a PEP8 validator used during development
 
 ### Other 
 
@@ -162,6 +186,8 @@ Uniqlo: https://www.uniqlo.com/ca/en/size/409212.html
 ASOS: https://www.asos.com/au/discover/size-charts/women/
 
 ## License
+
+Copyright (c) 2024 Celeste Bird 
 
 MIT
 
