@@ -50,22 +50,22 @@ For further information about the complexities of fast fashion returns check out
     ```sh
     git clone https://github.com/celestemarieb/customsize-python.git
     ```
-3. navigate to '/src' directory 
+3. navigate to cloned directory 
 
     ```sh
-    cd customsize-python/src
+    cd customsize-python
     ```
 
 4. update permissions 
 
     enter into the terminal: 
-    chmod +x run_sizeomatic.sh
+    chmod +x ./src/run_sizeomatic.sh
 
 5. run the application 
 
     enter into the terminal: 
     ```sh
-    ./run_sizeomatic.sh
+    ./src/run_sizeomatic.sh
     ```
 
 ### windows
@@ -83,22 +83,23 @@ For further information about the complexities of fast fashion returns check out
     ```sh
     git clone https://github.com/celestemarieb/customsize-python.git
     ```
-3. navigate to '/src' directory 
+3. navigate to cloned directory 
 
     ```sh
-    cd customsize-python/src
+    cd customsize-python
     ```
 
 4. update permissions 
 
     enter into the terminal: 
-    chmod +x run_sizeomatic.sh
+    chmod +x ./src/run_sizeomatic.sh
 
 5. run the application 
 
     enter into the terminal: 
     ```sh
-    ./run_sizeomatic.sh
+    ./src/run_sizeomatic.sh
+    ```
 
 ## walkthrough 
 
