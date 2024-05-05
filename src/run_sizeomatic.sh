@@ -13,10 +13,10 @@ fi
 source venv/bin/activate
 
 # Install packages from requirements.txt
-pip install -r requirements.txt
+pip install -r ./src/requirements.txt
 
 # run application
-python3 main.py
+python3 ./src/main.py
 
 # deactivate virtual environment
 deactivate

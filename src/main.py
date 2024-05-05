@@ -18,11 +18,11 @@ def create_customer_database():
     customer_columns = ['CustomerID','customerUserName','customerPassword','customer_bust','customer_waist','customer_hip']
     customers = pd.DataFrame(columns=customer_columns)
     customers['CustomerID'] = customers.index
-    customers.to_csv('customers.csv',sep=',',index=False,encoding='utf-8')
+    customers.to_csv('./src/customers.csv',sep=',',index=False,encoding='utf-8')
     return customers
 
 def update_customer_database():
-    customers.to_csv('customers.csv',sep=',',index=False,encoding='utf-8')
+    customers.to_csv('./src/customers.csv',sep=',',index=False,encoding='utf-8')
     return customers
 
 customers = create_customer_database()
@@ -33,15 +33,15 @@ def create_retailer_database():
     retailer_columns = ['retailerID','sizeChartID','retailerName']
     retailers = pd.DataFrame(columns=retailer_columns)
     retailers['retailerID'] = retailers.index
-    retailers.to_csv('retailers.csv',sep=',',index=False,encoding='utf-8')
+    retailers.to_csv('./src/retailers.csv',sep=',',index=False,encoding='utf-8')
     return retailers
 
 def populate_retailer_database():
-    retailers = pd.read_csv("retailers_data.csv")
+    retailers = pd.read_csv("./src/retailers_data.csv")
     return retailers
 
 def update_retailer_database():
-    retailers.to_csv('retailers.csv',sep=',',index=False,encoding='utf-8')
+    retailers.to_csv('./src/retailers.csv',sep=',',index=False,encoding='utf-8')
     return retailers
 
 retailers = create_retailer_database()
@@ -54,15 +54,15 @@ def create_sizing_database():
     sizing_columns = ['sizeID','sizeChartID','sizeName','size_bust','size_waist','size_hip']
     sizing = pd.DataFrame(columns=sizing_columns)
     sizing['sizeID'] = sizing.index
-    sizing.to_csv('sizing.csv',sep=',',index=False,encoding='utf-8')
+    sizing.to_csv('./src/sizing.csv',sep=',',index=False,encoding='utf-8')
     return sizing
 
 def populate_sizing_database():
-    sizing = pd.read_csv("sizing_data.csv")
+    sizing = pd.read_csv("./src/sizing_data.csv")
     return sizing
 
 def update_sizing_database():
-    sizing.to_csv('sizing.csv',sep=',',index=False,encoding='utf-8')
+    sizing.to_csv('./src/sizing.csv',sep=',',index=False,encoding='utf-8')
     return sizing
 
 sizing = create_sizing_database()
