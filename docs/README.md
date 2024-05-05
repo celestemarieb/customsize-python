@@ -184,7 +184,6 @@ A kanban board was created to store and manage tasks.
 
 ![kanban board](docs/assets/github_project_kanban.png)
 
-
 ## Schema 
 
 A schema was developed and implemented in the application based on my understanding of the business domain. 
@@ -204,6 +203,10 @@ A 'Body' object is then associated (via CustomerID) with a 'Customer'.
 This is a one-to-one relationship. 
 
 ![class diagram](./assets/schema.png)
+
+## Style Guide
+
+This project was written reference to the [PEP 8 Style Guide for Python](https://peps.python.org/pep-0008/)
 
 ## Technologies 
 ### Languages Used 
