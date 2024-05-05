@@ -1,19 +1,18 @@
-# system packages 
-from sys import argv
-
 # external packages 
+import uuid
 import numpy as np
 import pandas as pd
 from simple_term_menu import TerminalMenu
-import uuid
 from random_username.generate import generate_username
 from rich import print as rprint
 
 # import schema 
 from schema import *
 
-# databases 
+# database creation and management 
+
 # store customer information
+
 def create_customer_database():
     customer_columns = ['CustomerID','customerUserName','customerPassword','customer_bust','customer_waist','customer_hip']
     customers = pd.DataFrame(columns=customer_columns)
@@ -29,6 +28,7 @@ customers = create_customer_database()
 customers = update_customer_database()
 
 # store retailer information
+
 def create_retailer_database():
     retailer_columns = ['retailerID','sizeChartID','retailerName']
     retailers = pd.DataFrame(columns=retailer_columns)
@@ -74,7 +74,8 @@ def view_sizing():
     return sizing_snapshot
 
 # key features 
-# feature 1 : find size
+
+# Feature 1 : Find Size
 
 def find_size(customerID):
     print('Enter the name of the retailer. We will find your size!')
@@ -93,13 +94,11 @@ def find_size(customerID):
     print(f'At {retailer_name_input} the size which would match you best is {size_match}')
     return size_match
 
-# feature 2 : check fit 
+# Feature 2 : Check Fit 
 
-def check_fit_dialogue(customerID):
+def check_fit_dialogue(CustomerID):
     print('Enter the retailer and size. We will check your fit!')
-    a = customers.loc[customers['CustomerID'] == customerID,'customerUserName']
-    customer_user_name = a.iloc[0]
-    customer_measurements = find_body_measurements(customer_user_name)
+    customer_measurements = find_body_measurements(CustomerID)
     retailer_name_input = input("Retailer Name: ")
     size_name_input = input("Size Name: ")
     fit = check_fit(customer_measurements,retailer_name_input,size_name_input)
@@ -118,7 +117,7 @@ def check_fit(customer_measurements,retailerName,sizeName):
     return c
 
 
-# feature 3 : convert size 
+# Feature 3 : Convert Size 
 
 def convert_size():
     print('Enter the retailers and size name. Then enter the name of the retailer you would like the size to be converted to. We will find your size!')
@@ -145,8 +144,8 @@ def convert_size():
             break
     return size_match
 
-
-# id generation
+# id and username generation 
+# id generation function 
 
 def generate_id():
     generated_id = uuid.uuid4()
@@ -158,22 +157,22 @@ def generate_new_username():
     generated_username = generate_username()
     return generated_username
 
-# collect dimensions
+# functions to collect dimensions (both the dimensions of a garment (size) of the dimensions of a person (body))
 
-measurement_input_warning = "Please enter the measurement in centimetres (e.g. 75.5)"
+MEASUREMENT_INPUT_WARNING = "Please enter the measurement in centimetres (e.g. 75.5)"
 
-measurement_range_warning = "Hmm that number seems outside the usual range (between 0 and 500), double check your measurements"
+MEASUREMENT_RANGE_WARNING = "Hmm that number seems outside the usual range (between 0 and 500), double check your measurements"
 
 def collect_bust_measurement():
     while True:
         try:
             bust_measurement = float(input("Bust (in centimetres): "))
             if bust_measurement < 0 or bust_measurement > 300:
-                print(f"{measurement_range_warning}")
+                print(f"{MEASUREMENT_RANGE_WARNING}")
             else:
                 break
         except Exception:
-            print(f"{measurement_input_warning}")
+            print(f"{MEASUREMENT_INPUT_WARNING}")
     return bust_measurement
 
 def collect_waist_measurement():
@@ -181,11 +180,11 @@ def collect_waist_measurement():
         try:
             waist_measurement = float(input("Waist (in centimetres): "))
             if waist_measurement < 0 or waist_measurement > 300:
-                print(f"{measurement_range_warning}")
+                print(f"{MEASUREMENT_RANGE_WARNING}")
             else:
                 break
         except Exception:
-            print(f"{measurement_input_warning}")
+            print(f"{MEASUREMENT_INPUT_WARNING}")
     return waist_measurement
 
 def collect_hip_measurement():
@@ -193,14 +192,14 @@ def collect_hip_measurement():
         try:
             hip_measurement = float(input("Hip (in centimetres): "))
             if hip_measurement < 0 or hip_measurement > 300:
-                print(f"{measurement_range_warning}")
+                print(f"{MEASUREMENT_RANGE_WARNING}")
             else:
                 break
         except Exception:
-            print(f"{measurement_input_warning}")
+            print(f"{MEASUREMENT_INPUT_WARNING}")
     return hip_measurement
 
-# collect customer measurements
+# collect customer measurements to store in customer database 
 
 def collect_body_measurements(customerId): 
     customer_bust = collect_bust_measurement()
@@ -213,16 +212,16 @@ def collect_body_measurements(customerId):
     update_customer_database()
     return body_information
 
-def find_body_measurements(customerUserName):
-    a = customers.loc[customers['customerUserName'] == customerUserName,'CustomerID']
-    customer_id = a.iloc[0]
-    b = customers.loc[customers['customerUserName'] == customerUserName,'customer_bust']
+# retrieve customer measurements from customer database using customer username 
+
+def find_body_measurements(CustomerID):
+    b = customers.loc[customers['CustomerID'] == CustomerID,'customer_bust']
     customer_bust = b.iloc[0]
-    c = customers.loc[customers['customerUserName'] == customerUserName,'customer_waist']
+    c = customers.loc[customers['CustomerID'] == CustomerID,'customer_waist']
     customer_waist = c.iloc[0]
-    d = customers.loc[customers['customerUserName'] == customerUserName,'customer_hip']
+    d = customers.loc[customers['CustomerID'] == CustomerID,'customer_hip']
     customer_hip = d.iloc[0]
-    body_information = Body (customer_id,customer_bust,customer_waist,customer_hip)
+    body_information = Body (CustomerID,customer_bust,customer_waist,customer_hip)
     return body_information
 
 # create new customer
