@@ -111,7 +111,7 @@ Note the dotted lines. This indicates a scenario where a customer without a pre-
 
 After creating a profile they are returned to Feature #1 or #2 to continue their journey with their measurements now known to the application. 
 
-![user flow diagram](./assets/userflowdiagram.png) 
+![user flow diagram](./docs/assets/userflowdiagram.png) 
 
 ## features 
 
@@ -182,7 +182,7 @@ This project is planned and managed in a github project here: https://github.com
 
 A kanban board was created to store and manage tasks. 
 
-![kanban board](docs/assets/github_project_kanban.png)
+![kanban board](./docs/assets/github_project_kanban.png)
 
 ## Schema 
 
