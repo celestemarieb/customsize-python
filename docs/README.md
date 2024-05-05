@@ -27,13 +27,78 @@ For further information about the complexities of fast fashion returns check out
 
 ## github repository 
 
-[size o matic](https://github.com/celestemarieb/customsize-python)
+[size o matic repository](https://github.com/celestemarieb/customsize-python)
+
+## github project 
+
+[size o matic project](https://github.com/users/celestemarieb/projects/6/views/1)
 
 ## how to install
 
 ### mac os / linux
 
-### wsl
+1. open a terminal window
+
+2. clone the github repository 
+
+    SHH: 
+    ```sh
+    git clone git@github.com:celestemarieb/customsize-python.git
+    ```
+
+    HTTPS: 
+    ```sh
+    git clone https://github.com/celestemarieb/customsize-python.git
+    ```
+3. navigate to '/src' directory 
+
+    ```sh
+    cd customsize-python/src
+    ```
+
+4. update permissions 
+
+    enter into the terminal: 
+    chmod +x run_sizeomatic.sh
+
+5. run the application 
+
+    enter into the terminal: 
+    ```sh
+    ./run_sizeomatic.sh
+    ```
+
+### windows
+
+1. open a Windows Subsystem for Linx (WSL) terminal 
+
+2. clone the github repository 
+
+    SHH: 
+    ```sh
+    git clone git@github.com:celestemarieb/customsize-python.git
+    ```
+
+    HTTPS: 
+    ```sh
+    git clone https://github.com/celestemarieb/customsize-python.git
+    ```
+3. navigate to '/src' directory 
+
+    ```sh
+    cd customsize-python/src
+    ```
+
+4. update permissions 
+
+    enter into the terminal: 
+    chmod +x run_sizeomatic.sh
+
+5. run the application 
+
+    enter into the terminal: 
+    ```sh
+    ./run_sizeomatic.sh
 
 ## walkthrough 
 
@@ -112,7 +177,11 @@ To accommmodate both womenswear and menswear this measurement should renamed as 
 ## Implementation  
 
 ## Implementation Planning
-This project is planned and managed in a github project viewable here: https://github.com/users/celestemarieb/projects/6/views/1
+This project is planned and managed in a github project here: https://github.com/users/celestemarieb/projects/6/views/1
+
+A kanban board was created to store and manage tasks. 
+
+![kanban board](docs/assets/github_project_kanban.png)
 
 
 ## Schema 
