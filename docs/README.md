@@ -216,9 +216,6 @@ BASH
 
 A full list of dependencies is contained within requirements.txt. 
 
-[random_username](https://pypi.org/project/random-username/)
-    to generate customer usernames 
-
 [numpy](https://pypi.org/project/numpy/)
     used to work easily with the data structures created by and features of pandas
 

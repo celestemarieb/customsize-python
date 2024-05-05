@@ -3,7 +3,6 @@ import uuid
 import numpy as np
 import pandas as pd
 from simple_term_menu import TerminalMenu
-from random_username.generate import generate_username
 from rich import print as rprint
 
 # import schema 
@@ -77,16 +76,9 @@ def view_sizing():
 
 # Feature 1 : Find Size
 
-def find_size(customerID):
+def find_size(CustomerID):
     print('Enter the name of the retailer. We will find your size!')
-    # query DB to find measurements
-    a = customers.loc[(customers['CustomerID'] == customerID),'customer_bust']
-    bust_measurement = a.iloc[0]
-    b = customers.loc[(customers['CustomerID'] == customerID),'customer_waist']
-    waist_measurement = b.iloc[0]
-    c = customers.loc[(customers['CustomerID'] == customerID),'customer_hip']
-    hip_measurement = c.iloc[0]
-    customer_dimensions = Dimensions(bust_measurement,waist_measurement,hip_measurement)
+    customer_dimensions = find_body_measurements(CustomerID)
     retailer_name_input = input("Retailer Name: ")
     selected_size_chart_ID = find_sizes_by_retailer(retailer_name_input)
     size_match = find_size_within_retailer(selected_size_chart_ID,customer_dimensions)
@@ -154,7 +146,8 @@ def generate_id():
 # username generation 
 
 def generate_new_username():
-    generated_username = generate_username()
+    #generated_username = generate_username()
+    generated_username = input("Your user name: ")
     return generated_username
 
 # functions to collect dimensions (both the dimensions of a garment (size) of the dimensions of a person (body))
@@ -212,7 +205,7 @@ def collect_body_measurements(customerId):
     update_customer_database()
     return body_information
 
-# retrieve customer measurements from customer database using customer username 
+# retrieve customer measurements from customer database using customer id
 
 def find_body_measurements(CustomerID):
     b = customers.loc[customers['CustomerID'] == CustomerID,'customer_bust']
@@ -224,7 +217,7 @@ def find_body_measurements(CustomerID):
     body_information = Body (CustomerID,customer_bust,customer_waist,customer_hip)
     return body_information
 
-# create new customer
+# create new customer record
 
 def create_customer():
     id_input = generate_id()
@@ -238,32 +231,29 @@ def create_customer():
     return new_customer.customerID
 
 
-# find existing customer 
+# find existing customer record; create a new profile if not found
+
+CUSTOMER_NOT_FOUND = "Customer not found. Let's create a new profile"
 
 def find_customer(customerUserName):
     while True:
         try:
-            a = customers.loc[customers['customerUserName'] == customerUserName,'customerUserName']
-            customer_match = a.iloc[0]
-            customer_exists = True
+            a = customers.loc[(customers['customerUserName'] == customerUserName)]
+            b = a.head()
+            customer_id = b['CustomerID'].values[0]
             break
         except Exception:
-            print("Customer not found")
-            customer_exists = False
+            print(CUSTOMER_NOT_FOUND)
+            customer_id = create_customer()
+            collect_body_measurements(customer_id)
             break
-    return customer_exists
+    return customer_id
 
-# customer 
+# prompts user to provide username, this is then checked against the database
 
 def check_customer():
     name_input = str(input("Enter your username: "))
-    existing_customer_search_result = find_customer(name_input)
-    if existing_customer_search_result == False:
-        current_customer_id = create_customer()
-        collect_body_measurements(current_customer_id)
-    elif existing_customer_search_result == True:
-        # populate current customer object from database
-        current_customer_id = customers.getvalue(name_input,'CustomerID')
+    current_customer_id = find_customer(name_input)
     return current_customer_id
 
 # add new retailer to database
@@ -310,7 +300,7 @@ def evaluate_fit(customer,dimensions):
     else: fit = False
     return fit
 
-# search 
+# Search for sizes provided by a particular retailer
 
 def find_sizes_by_retailer(retailerName):
     size_chart_ID = 0
@@ -324,6 +314,8 @@ def find_sizes_by_retailer(retailerName):
             size_chart_ID = 0
             break
     return size_chart_ID
+
+# Search for sizes by a particular retailer which match given dimensions
 
 def find_size_within_retailer(sizeChartID,Dimensions):
     while True:
@@ -355,21 +347,15 @@ def get_dimensions_of_size(sizeID):
     size_dimensions = Dimensions(bust_measurement,waist_measurement,hip_measurement)
     return size_dimensions
 
-# conversion  
+# Convert size between retailers i.e. what is the equivalent size at uniqlo to a UK 4 at asos  
 
 def convert_size_between_retailers(Dimensions,retailerName):
     a = find_sizes_by_retailer(retailerName)
     b = find_size_within_retailer(a,Dimensions)
     return b
 
-#size_measurements = create_size()
-
-#new_dimensions = Dimensions(size_measurements.bust,size_measurements.waist,size_measurements.hip)
-
-#size_match = convert_size_between_retailers(new_dimensions,'asos')
-
-# interface
-# main menu
+# Interface
+# Main menu
 
 def main():
     options = ["0 : Add Profile","1 : Find Size ", "2 : Check Fit", "3 : Convert Size","4 : Add Retailer","5 : Add Size","6 : View All Sizes","7 : Quit"]
@@ -379,7 +365,7 @@ def main():
     selection = options[menu_entry_index]
     if selection == options[0]:
         current_customer_id = create_customer()
-        current_customer_measurements = collect_body_measurements(current_customer_id)
+        collect_body_measurements(current_customer_id)
         main()
     elif selection == options[1]:
         current_customer_id = check_customer()
@@ -395,12 +381,10 @@ def main():
     elif selection == options[4]:
         create_retailer()
         main()
-    elif selection == options[5]:
-        # check retailer -- pass retailer object 
+    elif selection == options[5]: 
         create_size()
         main()
-    elif selection == options[6]:
-        #view sizing database 
+    elif selection == options[6]: 
         view_sizing()
         main()
     elif selection == options[7]:
